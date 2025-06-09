@@ -328,6 +328,8 @@ docker rm -f myphp-container
 docker rmi myphpapp
 ·       Remove the myphpp image again
 
+/////////////////////////////////////////////////////////////////////////
+
 Exercise Worksheet8
 www.vomtom.at
 From the Course:
