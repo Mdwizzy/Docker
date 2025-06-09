@@ -331,3 +331,38 @@ docker rm -f myphp-apache
 • To remove the container
 docker rmi myphpapp
 • To remove the image for now
+
+Exercise Worksheet9
+www.vomtom.at
+From the Course:
+Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
+Create an Image and upload it to Docker-Hub
+Use this Dockerfile:
+FROM alpine
+RUN apk update && apk add curl
+ENTRYPOINT [ "curl" ]
+Run
+docker build -t mycurl .
+• This will build an image
+docker image ls
+• List the images
+docker run --rm mycurl www.google.com
+• Should output the HTML from the google website
+docker login
+• Login to Docker-Hub
+• If you don’t have a user-name then create one first
+• Remember your username! Let’s assume it is “myUser123”
+docker tag mycurl myUser123/mycurl:latest
+• Tag your image with “username/repository:tag” -> “myUser123/mycurl:latest”
+docker image ls
+• Lists also the new image as well, with the same container ID
+docker push myUser123/mycurl:latest
+• Pushes the image to docker hub
+docker rmi mycurl
+• Remove the “mycurl” image
+docker rmi myUser123/mycurl:latest
+• Remove the myUser123/mycurl:latgest image as well
+docker run --rm myUser123/mycurl:latest www.google.com
+• It will download the image again from docker hub from your public repository
+docker rmi myUser123/mycurl:latest
+• cleanup
