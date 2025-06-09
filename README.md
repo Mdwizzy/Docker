@@ -1,18 +1,45 @@
 DOCKER
 Understanding Docker Concepts
+Docker is a containerization platform that allows developers to package applications and
+their dependencies into self-contained units called containers. these containers can then be 
+easily deployed and run on any system, ensuring consistency and portability
 
 Container: A lightweight, standalone, and executable package that includes everything needed to run a piece of software.
-
 Image: Think of this as a template or blueprint for containers. It contains all the instructions needed to create a container.
-
 Docker Hub: Like GitHub but for Docker images - it's where you can find and share container images.
-
 Docker Engine: The core technology that runs and manages containers on your machine.
 
+/////////////////////////////////////////////////////////////////////////
 
- docker run hello-world
 
-You should see output similar to this:
+DOWNLOADING DOCKER ON WINDOWS
+Install Docker Desktop for Windows Professional or Windows Server
+https://docs.docker.com/docker-for-windows/install/
+README FIRST for Docker Toolbox and Docker Machine users: Docker Desktop for Windows requires
+Microsoft Hyper-V to run. The Docker Desktop for Windows installer enables Hyper-V for you, if
+needed, and restarts your machine. After Hyper-V is enabled, VirtualBox no longer works, but any
+VirtualBox VM images remain. VirtualBox VMs created with docker-machine (including the default
+one typically created during Toolbox install) no longer start. These VMs cannot be used side-by-side
+with Docker Desktop for Windows. However, you can still use docker-machine to manage remote
+VMs.
+If you want to download Docker Desktop without logging into hub.docker.com then you can try to
+download it from here:
+https://download.docker.com/win/stable/Docker%20for%20Windows%20Installer.exe
+
+/////////////////////////////////////////////////////////////////////////
+
+DOWNLOADING DOCKER ON MAC
+Install Docker Desktop for MacOS Step by Step
+https://docs.docker.com/docker-for-mac/install/
+You normally need to sign up first in Docker-Hub to download docker. Officially, there is no other
+way – at least none that I found. I have therefore copied the direct download link here, so, if you
+really don’t want to signup to Docker-Hub then download it directly.
+https://download.docker.com/mac/stable/Docker.dmg
+
+/////////////////////////////////////////////////////////////////////////
+
+try runnind the command :  docker run hello-world
+ You should see output similar to this:
 
 Hello from Docker!
 This message shows that your installation appears to be working correctly.
@@ -60,9 +87,6 @@ docker attach <container_id >
 /////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet1
-www.vomtom.at
-From the Course:
-Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
 Lecture: Running a single Docker Container step by step
 docker run -it ubuntu /bin/bash
 • runs the container and attaches to stdin, the standard input, where the /bin/bash processs is
@@ -99,9 +123,6 @@ docker ps -a
 /////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet2
-www.vomtom.at
-From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
-
 Running multiple docker containers from the command line step by step
 This shows the difference between containers and images. We will create two containers (linux1, linux2) based on the same image (ubuntu)
   docker run -it -d --rm --name linux1 ubuntu /bin/bash
@@ -138,9 +159,6 @@ Cli1: exit
 /////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet3
-www.vomtom.at
-From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
-
 Running docker containers with a shared host file system (a.k.a. docker volumes)
 Let’s share some files from our host to our docker container. This is done with the “-v” flag and then “host-directory:client-directory” and is directly mapped into the container.
 
@@ -169,9 +187,6 @@ o All you must do is work with it like you work with “rar” itself
 /////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet4
-www.vomtom.at
-From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
-
 Using PHP with volume mounting in docker images step by step
 docker run -it --rm --name my-running-script php:7.2-cli /bin/bash
 · Downloads the official php 7.2 cli image
@@ -213,9 +228,6 @@ docker run -it --rm -v ${PWD}:/myfiles -w /myfiles --name my-running-script php:
 /////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet5
-www.vomtom.at
-From the Course:
-Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
 Working with Servers, Logs and Port forwarding in Docker
 In this example we are starting an apache webserver hosting a single file
 docker run -d httpd
@@ -265,9 +277,6 @@ docker rm -f container_identifier
 /////////////////////////////////////////////////////////////////////////
 
  Exercise Worksheet6
-www.vomtom.at
-From the Course:
-Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
 Your first Dockerfile Step by Step
 Let’s create this Dockerfile:
 FROM php:7.2-cli
@@ -301,9 +310,6 @@ docker rmi myphpapp
 /////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet7
-www.vomtom.at
-From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
- 
 Using a PHP Dev-Server inside a Container with a Dockerfile
 Change the Dockerfile from the previous example to:
 
@@ -364,9 +370,6 @@ docker rmi myphpapp
 /////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet9
-www.vomtom.at
-From the Course:
-Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
 Create an Image and upload it to Docker-Hub
 Use this Dockerfile:
 FROM alpine
@@ -397,5 +400,49 @@ docker run --rm myUser123/mycurl:latest www.google.com
 • It will download the image again from docker hub from your public repository
 docker rmi myUser123/mycurl:latest
 • cleanup
+
+/////////////////////////////////////////////////////////////////////////
+
+Exercise Worksheet10
+The docker-compose.yml File Explained Line by Line for Composer Beginners
+Let’s re-use this Dockerfile:
+FROM php:7.2-apache
+COPY index.php /var/www/html
+And this index.php file in the same directory:
+<?php
+echo "hello world \n\n";
+But this time we will add a docker-compose.yml file in the same directory as well:
+version: '3'
+services:
+phpapp:
+ports:
+- "8080:80"
+build:
+context: ./
+dockerfile: Dockerfile
+Then we run
+docker-compose up
+• It will read the docker-compose.yml file in the current directory
+• It will build a new image “folder-name”_”service-name” based on the Dockerfile
+o called “step-1_phpapp”
+• It will run this as a container named “folder-name”_”service_name”_”index”
+o So: “step-1_phpapp_1”
+Now we can access http://localhost:8080 and it should show us the “hello world” again from our
+index.php.
+If we change the index.php nothing happens.
+• Change the “hello world” to “hello docker”.
+• Save it.
+• Reload the browser, you still see “hello world” instead of “hello docker”
+• Do you know why?
+ctrl-c
+• Stop the running container(s)
+docker-compose up
+• Start the container(s) again
+Open http://localhost:8080 should still bring up “hello world”.
+docker-compose up --build
+• This rebuilds the image before spinning it up
+• Now http://localhost:8080 container “hello docker”
+docker-compose rm
+• Cleanup, remove the containers
 
 /////////////////////////////////////////////////////////////////////////
