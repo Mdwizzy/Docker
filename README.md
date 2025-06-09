@@ -101,116 +101,114 @@ docker ps -a
 Exercise Worksheet2
 www.vomtom.at
 From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
- 
- 
+
 Running multiple docker containers from the command line step by step
 This shows the difference between containers and images. We will create two containers (linux1, linux2) based on the same image (ubuntu)
-docker run -it -d --rm --name linux1 ubuntu /bin/bash
-·       creates container “linux1”
-·       additional flags:
-o   -d starts the container as “detached”. Use “docker attach” to attach to it later on.
-o   --rm cleans up the container after stopping. The container will be removed, basically the same as “docker rm container_identifier” after stopping the container. So everything is kept tidy.
-o   --name will give the container a dedicated name, which makes it easier to address the container later on.
+  docker run -it -d --rm --name linux1 ubuntu /bin/bash
+· creates container “linux1”
+· additional flags:
+ -d starts the container as “detached”. Use “docker attach” to attach to it later on.
+ --rm cleans up the container after stopping. The container will be removed, basically the same as “docker rm container_identifier” after stopping the container. So everything is kept tidy.
+ --name will give the container a dedicated name, which makes it easier to address the container later on.
 docker run -it -d --rm --name linux2 ubuntu /bin/bash
-·       Creates container “linux2”
+· Creates container “linux2”
 Cli1: docker attach linux1
-·       Attaches to container linux1
+· Attaches to container linux1
 Cli1: ls
-·       Lists the file system on linux1
+· Lists the file system on linux1
 Cli1: mkdir mylinux1
-·       Creates a new directory on container linux1
+· Creates a new directory on container linux1
 Cli1: ls
-·       Shows that “mylinux1” was created
+· Shows that “mylinux1” was created
 Cli2: docker attach linux2
-·       Attaches to container linux2
+· Attaches to container linux2
 Cli2: ls
-·       Shows that the directory of linux2 is different than linux1, although they are both from the same image “ubuntu”
-·       They are separated, they don’t share their file-system
-·       The bash process is isolated in the container
+· Shows that the directory of linux2 is different than linux1, although they are both from the same image “ubuntu”
+· They are separated, they don’t share their file-system
+· The bash process is isolated in the container
 Cli2: exit
-·       This will exit the bash and also remove the container because of the --rm command
+· This will exit the bash and also remove the container because of the --rm command
 Cli2: docker ps -a
-·       Shows only one container which is running, the other one got removed
+· Shows only one container which is running, the other one got removed
 Cli1: exit
-·       Exits the only running container linux1 and deletes the container
-docker ps -a
-·       Shows nothing anymore
+· Exits the only running container linux1 and deletes the container
+  docker ps -a
+· Shows nothing anymore
 
 /////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet3
 www.vomtom.at
 From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
- 
- 
+
 Running docker containers with a shared host file system (a.k.a. docker volumes)
 Let’s share some files from our host to our docker container. This is done with the “-v” flag and then “host-directory:client-directory” and is directly mapped into the container.
- 
+
 docker run --rm -v ${PWD}:/myvol ubuntu /bin/bash -c "ls -lha > /myvol/myfile.txt"
-·       This command runs “ls -lha” and pipes the output to /myvol/myfile.txt
-·       /myvol is “mounted” to the current working directory on the host
-·       On the host you can observe a new file called “myfile.txt” with the output of “ls -lha”
-·       The container is then ended and removed because of “--rm"
-From the docker hub I get an image that contains the rar tool. It’s minimal, but it demonstrates what can be done with separated environments:
+· This command runs “ls -lha” and pipes the output to /myvol/myfile.txt
+· /myvol is “mounted” to the current working directory on the host
+· On the host you can observe a new file called “myfile.txt” with the output of “ls -lha”
+· The container is then ended and removed because of “--rm"
+  From the docker hub I get an image that contains the rar tool. It’s minimal, but it demonstrates what can be done with separated environments:
 https://hub.docker.com/r/klutchell/rar/dockerfile
 docker run --rm klutchell/rar 
-·       This will download the image klutchell/rar
-·       Execute it
-·       In the Dockerfile you can see the “entrypoint” is already the “rar” executable
-o   This means, upon execution of “docker run” it starts the rar process.
-o   All you must do is work with it like you work with “rar” itself
-·       “a” command will add to an archive.
-·       If we mount the right directory, we can simply compress files from the command line:
-docker run --rm -v ${PWD}:/files klutchell/rar a /files/myrar.rar /files/myfile.txt
-·       It creates a new compressed rar file called “myrar.rar” inside the hosts working directory
-·       It’s fully compliant to rar files
-docker run --rm -v ${PWD}:/files -w /files klutchell/rar a myrar.rar myfile.txt
-·       The “-w /files” flag sets the working directory to /files. 
-·       It’s like “cd /files” inside the container and we can skip the full path to the files we want to compress
+· This will download the image klutchell/rar
+· Execute it
+· In the Dockerfile you can see the “entrypoint” is already the “rar” executable
+o This means, upon execution of “docker run” it starts the rar process.
+o All you must do is work with it like you work with “rar” itself
+· “a” command will add to an archive.
+· If we mount the right directory, we can simply compress files from the command line:
+  docker run --rm -v ${PWD}:/files klutchell/rar a /files/myrar.rar /files/myfile.txt
+· It creates a new compressed rar file called “myrar.rar” inside the hosts working directory
+· It’s fully compliant to rar files
+  docker run --rm -v ${PWD}:/files -w /files klutchell/rar a myrar.rar myfile.txt
+· The “-w /files” flag sets the working directory to /files. 
+· It’s like “cd /files” inside the container and we can skip the full path to the files we want to compress
 
 /////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet4
 www.vomtom.at
 From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
- 
+
 Using PHP with volume mounting in docker images step by step
 docker run -it --rm --name my-running-script php:7.2-cli /bin/bash
-·       Downloads the official php 7.2 cli image
-·       Runs a shell inside
-php -m
-·       Get the installed modules
+· Downloads the official php 7.2 cli image
+· Runs a shell inside
+php -m 
+· Get the installed modules
 php -i
-·       Get the config of the PHP cli
+· Get the config of the PHP cli
 echo '<? echo "test text\n";' > ~/index.php
-·       This will write <? echo “text text\n”; into the index.php file in the home directory of root
-·       Let’s execute this
+· This will write <? echo “text text\n”; into the index.php file in the home directory of root
+· Let’s execute this
 php ~/index.php
-·       Should print now “test text”
+· Should print now “test text”
 exit
-·       Will end the container, but will also remove the container (including our index.php) because of the --rm flag
-·       This is where mounting an external host directory comes in handy
+· Will end the container, but will also remove the container (including our index.php) because of the --rm flag
+· This is where mounting an external host directory comes in handy
 docker run -it --rm -v ${PWD}:/myfiles --name my-running-script php:7.0-cli /bin/bash
-·       Now we are running the php 7.0, not the php 7.2 cli
-·       And we are mounting the root directory into the /myfiles directory inside the container
+· Now we are running the php 7.0, not the php 7.2 cli
+· And we are mounting the root directory into the /myfiles directory inside the container
 echo '<? echo "test text\n";' > /myfiles/index.php
-·       This creates the same index.php, but this time inside /myfiles.
-·       Observe the host directory
+· This creates the same index.php, but this time inside /myfiles.
+· Observe the host directory
 php /myfiles/index.php
-·       This should run index.php with the php 7.0 interpreter
+·This should run index.php with the php 7.0 interpreter
 exit
-·       We can safely exit again, because our file is securely stored on the host. It will not be destroyed with the container upon exiting
+· We can safely exit again, because our file is securely stored on the host. It will not be destroyed with the container upon exiting
 docker run -it --rm -v ${PWD}:/myfiles --name my-running-script php:7.2-cli /bin/bash
-·       Let’s re-run the 7.2-cli container
-·       This time with the same directory mounted in /myfiles
+· Let’s re-run the 7.2-cli container
+· This time with the same directory mounted in /myfiles
 php /myfiles/index.php
-·       This allows you to execute the same script with another PHP version
+· This allows you to execute the same script with another PHP version
 exit
-·       Let’s exit the container
+· Let’s exit the container
 docker run -it --rm -v ${PWD}:/myfiles -w /myfiles --name my-running-script php:7.2-cli php index.php
-·       Will directory run index.php and output the “test text” and exit again
-·       No need to actually enter the container
-·       -w flag again sets the working directory to /myfiles
+· Will directory run index.php and output the “test text” and exit again
+· No need to actually enter the container
+· -w flag again sets the working directory to /myfiles
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -311,22 +309,22 @@ Change the Dockerfile from the previous example to:
 
 Then run the command:
 docker build -t myphpapp .
-·       Will rebuild the image and tag it again as “myphpapp”
-·       Will overwrite the old one
-·       Will copy the index.php to a new directory /myproject
-·       Will run “php -S 0.0.0.0:8000” and serve the content of /myproject on port 8000
-·       CMD will take an array and run a command. Every parameter must be in a separate array element, so: CMD [“command”,”param1”, “param2”, …]
+·Will rebuild the image and tag it again as “myphpapp”
+·Will overwrite the old one
+·Will copy the index.php to a new directory /myproject
+·Will run “php -S 0.0.0.0:8000” and serve the content of /myproject on port 8000
+·CMD will take an array and run a command. Every parameter must be in a separate array element, so: CMD [“command”,”param1”, “param2”, …]
 docker run --name myphp-container -p 8080:8000 myphpapp
-·       Will run spin up the image “myphp” which we generated
-·       Will forward port 8000 in the container to port 8080 on the host
-·       http://localhost:8080 should bring up the hello world
+· Will run spin up the image “myphp” which we generated
+·Will forward port 8000 in the container to port 8080 on the host
+·http://localhost:8080 should bring up the hello world
 ctrl+c 
-·       to stop the container
-·       Mind on Windows: The container is still running in the background.
+·to stop the container
+·Mind on Windows: The container is still running in the background.
 docker rm -f myphp-container
-·       To remove the container: cleanup
+To remove the container: cleanup
 docker rmi myphpapp
-·       Remove the myphpp image again
+· Remove the myphpp image again
 
 /////////////////////////////////////////////////////////////////////////
 
