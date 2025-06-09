@@ -96,7 +96,7 @@ docker ps -a
 • And the list is empty again
 Exercise Worksheet2
 www.vomtom.at
-From the Course:  Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
+From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
  
  
 Running multiple docker containers from the command line step by step
@@ -132,17 +132,9 @@ Cli1: exit
 docker ps -a
 ·       Shows nothing anymore
  
-
-
-
-
-
-
-
-
 Exercise Worksheet3
 www.vomtom.at
-From the Course:  Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
+From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
  
  
 Running docker containers with a shared host file system (a.k.a. docker volumes)
@@ -169,20 +161,9 @@ docker run --rm -v ${PWD}:/files klutchell/rar a /files/myrar.rar /files/myfile.
 docker run --rm -v ${PWD}:/files -w /files klutchell/rar a myrar.rar myfile.txt
 ·       The “-w /files” flag sets the working directory to /files. 
 ·       It’s like “cd /files” inside the container and we can skip the full path to the files we want to compress
-
-
-
-
-
-
-
-
-
-
-
 Exercise Worksheet4
 www.vomtom.at
-From the Course:  Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
+From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
  
 Using PHP with volume mounting in docker images step by step
 docker run -it --rm --name my-running-script php:7.2-cli /bin/bash
@@ -224,9 +205,6 @@ docker run -it --rm -v ${PWD}:/myfiles -w /myfiles --name my-running-script php:
 
 
 
-
-
-
  Exercise Worksheet6
 www.vomtom.at
 From the Course:
@@ -263,14 +241,9 @@ docker rmi myphpapp
 
 
 
-
-
-
-
-
 Exercise Worksheet6
 www.vomtom.at
-From the Course:  Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
+From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
  
 Your first Dockerfile Step by Step
 Let’s create this Dockerfile:
@@ -302,7 +275,7 @@ docker rmi myphpapp
 
 Exercise Worksheet7
 www.vomtom.at
-From the Course:  Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
+From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
  
 Using a PHP Dev-Server inside a Container with a Dockerfile
 Change the Dockerfile from the previous example to:
@@ -325,3 +298,36 @@ docker rm -f myphp-container
 ·       To remove the container: cleanup
 docker rmi myphpapp
 ·       Remove the myphpp image again
+
+Exercise Worksheet8
+www.vomtom.at
+From the Course:
+Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
+Ship your Web-Application using Apache and PHP as Docker container with a
+Dockerfile
+Let’s create a Docker image and run this image as container with an Apache with PHP pre-installed.
+Then serve our index.php from the previous example.
+Change the Dockerfile to:
+FROM php:7.2-apache
+COPY index.php /var/www/html
+Then run the following commands:
+docker build -t myphpapp .
+• This will build an image myphpapp:latest
+• Will copy the index.php from the host inside the container in the directory /var/www/html
+• Will package everything
+docker run --name myphp-apache -p 8080:80 myphpapp
+• Will run the image myphpapp image
+• Open the apache inside the image
+• Bind port 8080 on the host to port 80 on the guest
+• Will give the container the name “myphp-apache”
+http://localhost:8080
+• Should bring up the “hello world” from the index.php
+• Changing the index.php on the host should not change it on the guest – it’s baked into the
+image
+• If you want a live version you need to volume-mount it into the container
+ctrl+c
+• To stop the container
+docker rm -f myphp-apache
+• To remove the container
+docker rmi myphpapp
+• To remove the image for now
