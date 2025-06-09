@@ -57,6 +57,7 @@ docker start <container_id or the first two character of the id>
 You can connect to the container by running the command 
 docker attach <container_id >
 
+
 Exercise Worksheet1
 www.vomtom.at
 From the Course:
