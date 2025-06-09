@@ -37,7 +37,7 @@ Docker daemon (the background service that manages Docker on your machine).
 Understanding Docker Images
 Now that we've run our first container, let's explore Docker images in more detail. Remember, an image is like a blueprint or a template for a container. 
 It contains all the instructions needed to create a container.
-To see the images available on your local system, use the following command:
+To see the images available on your local system, use the command:
 docker images
 
 Run a Docker container and access its shell.
@@ -57,6 +57,7 @@ docker start <container_id or the first two character of the id>
 You can connect to the container by running the command 
 docker attach <container_id >
 
+/////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet1
 www.vomtom.at
@@ -94,6 +95,9 @@ docker rm container_identifier
 • Clean up: Remove the container
 docker ps -a
 • And the list is empty again
+
+/////////////////////////////////////////////////////////////////////////
+
 Exercise Worksheet2
 www.vomtom.at
 From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
@@ -131,7 +135,9 @@ Cli1: exit
 ·       Exits the only running container linux1 and deletes the container
 docker ps -a
 ·       Shows nothing anymore
- 
+
+/////////////////////////////////////////////////////////////////////////
+
 Exercise Worksheet3
 www.vomtom.at
 From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
@@ -161,6 +167,9 @@ docker run --rm -v ${PWD}:/files klutchell/rar a /files/myrar.rar /files/myfile.
 docker run --rm -v ${PWD}:/files -w /files klutchell/rar a myrar.rar myfile.txt
 ·       The “-w /files” flag sets the working directory to /files. 
 ·       It’s like “cd /files” inside the container and we can skip the full path to the files we want to compress
+
+/////////////////////////////////////////////////////////////////////////
+
 Exercise Worksheet4
 www.vomtom.at
 From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
@@ -203,7 +212,59 @@ docker run -it --rm -v ${PWD}:/myfiles -w /myfiles --name my-running-script php:
 ·       No need to actually enter the container
 ·       -w flag again sets the working directory to /myfiles
 
+/////////////////////////////////////////////////////////////////////////
 
+Exercise Worksheet5
+www.vomtom.at
+From the Course:
+Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
+Working with Servers, Logs and Port forwarding in Docker
+In this example we are starting an apache webserver hosting a single file
+docker run -d httpd
+• Will start an apache in detached mode (-d)
+• It should open a webserver on port 80
+Open http://localhost:80
+• That doesn’t do anything
+• But is the Web-Server really running?
+docker exec -it container_identifier /bin/bash
+• You get an interactive shell inside the container
+apt-get update && apt-get install curl
+curl localhost:80
+• Should bring up a “it works” message, which means the webserver is running
+• But why can’t we see it on the host?
+exit
+• Exit the interactive shell
+docker logs container_identifier
+• This will give you the log output of the container
+• You even see the request from inside the container
+docker logs container_identifier -f
+• Will follow the log output until you hit ctrl+c
+• Localhost:80 doesn’t do anything
+docker inspect container_identifier
+• Will print out the container information
+• You see there are no ports bound to the host
+docker rm -f container_identifier
+• Stop and remove the container
+docker ps -a
+• Should be empty
+docker run -d -p 8080:80 httpd
+• -p 8080:80 forwards HOST:GUEST
+• On the host machine port 8080 is now mapped to port 80 in the guest machine
+Open http://localhost:8080
+• Should bring up now “it works”
+docker inspect container_identifier
+• Now shows the forwarded port
+docker rm -f container_identifier
+• Should stop and remove the container again
+http://localhost:8080
+• Is again unreachable, because the server stopped
+docker run -d -p 8080:80 -v ${PWD}:/var/www/html php:7.2-apache
+• Maps the current directory into /var/www/html, which is the document-root for apache
+• If you still have the index.php there it will now be served on http://localhost:8080
+docker rm -f container_identifier
+• Let’s remove the container
+
+/////////////////////////////////////////////////////////////////////////
 
  Exercise Worksheet6
 www.vomtom.at
@@ -239,39 +300,7 @@ docker rmi myphpapp
 • rmi will delete an image
 • And all depending images if they are not necessary anymore
 
-
-
-Exercise Worksheet6
-www.vomtom.at
-From the Course: Understanding Docker Run, Dockerfile, Docker-Compose for Beginners
- 
-Your first Dockerfile Step by Step
-Let’s create this Dockerfile:
-
-And also this index.php file in the same directory:
-
-Now go into the folder where the Dockerfile is located at.
-docker build -t myphpapp .
-·       “build” builds a new image
-·       -t is a tagging. In this case “myphpapp”, you can later find it.
-·       “.” is telling where the Dockerfile is located at
-docker run myphpapp
-·       Should print out “hello world” with two line breaks
-·       Ends the container immediately, the process “php index.php” has finished
-·       “CMD php index.php” opens this upon spin up of the container
-docker image ls
-·       List all the images
-·       See on top your newly created image
-docker ps -a
-·       List the containers
-docker rm container_identifier
-·       Remove the container from the myphpapp
-docker rmi myphpapp
-·       rmi will delete an image
-·       And all depending images if they are not necessary anymore
-
-
-
+/////////////////////////////////////////////////////////////////////////
 
 Exercise Worksheet7
 www.vomtom.at
@@ -332,6 +361,8 @@ docker rm -f myphp-apache
 docker rmi myphpapp
 • To remove the image for now
 
+/////////////////////////////////////////////////////////////////////////
+
 Exercise Worksheet9
 www.vomtom.at
 From the Course:
@@ -366,3 +397,5 @@ docker run --rm myUser123/mycurl:latest www.google.com
 • It will download the image again from docker hub from your public repository
 docker rmi myUser123/mycurl:latest
 • cleanup
+
+/////////////////////////////////////////////////////////////////////////
